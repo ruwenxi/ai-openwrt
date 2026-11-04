@@ -1,35 +1,30 @@
-# ImmortalWrt 编译仓库
+# NSS 固件云编译 (360 V6 / 京东云 RE-CS-02)
 
-## 使用方法
+源码：https://github.com/Gaojianli/immortalwrt-ipq
 
-1. 进入 GitHub 仓库的 **Actions** 页面
-2. 左侧选择 **Build ImmortalWrt**
-3. 点击右侧 **Run workflow**
-4. 下拉选择机型：`360v6` / `ax6600` / `all`
-5. 等待编译完成，固件自动发布到 **Releases**
+## 目录结构
+```
+.github/workflows/build-nss.yml   工作流 (唯一的 yml)
+config/
+  common.config                   两台共用：插件、zram、瘦身
+  360v6.config                    360 V6 机型
+  jdcloud-re-cs-02.config         RE-CS-02 机型 + 专属插件
+scripts/
+  01-custom-packages.sh           拉取第三方插件 (aurora/openclash/ddns-go/openlist2/athena-led)
+  02-default-settings.sh          默认 IP(10.1.1.1)、默认主题、OpenClash 内核
+  03-gen-config.sh                合并 config 并校验
+```
 
-## 文件说明
+## 使用
+1. 把整个目录内容上传到你自己的 GitHub 仓库根目录 (注意 .github 是隐藏文件夹，要一起上传)。
+2. Actions → Build NSS Firmware → Run workflow。
+3. 在运行页面底部的 Artifacts 下载固件。
 
-| 文件 | 说明 |
-|------|------|
-| `.github/workflows/build.yml` | 编译流程主文件 |
-| `configs/360v6.config` | 360v6 的 .config，替换为自己导出的 |
-| `configs/ax6600.config` | AX6600 的 .config，替换为自己导出的 |
-| `scripts/diy-360v6.sh` | 360v6 DIY 脚本（改 IP、主机名、插件等） |
-| `scripts/diy-ax6600.sh` | AX6600 DIY 脚本 |
+## 常改的地方
+- 改默认 IP：运行时填 `lan_ip`，或改 `scripts/02-default-settings.sh` 里的 `NEW_IP`。
+- 加/删插件：改 `config/*.config`。格式只认 `CONFIG_xxx=y` 和 `# CONFIG_xxx is not set`，注释用 `##`。
+- 换第三方插件仓库：改 `scripts/01-custom-packages.sh`。
 
-## 更换源码仓库
-
-编辑 build.yml 顶部 env 区域：
-
-  REPO_URL:    https://github.com/你的仓库地址
-  REPO_BRANCH: main
-
-## 导出 .config
-
-在本地 openwrt 目录配置好后执行：
-
-  make menuconfig
-  ./scripts/diffconfig.sh > ~/configs/360v6.config
-
-将输出文件替换掉 configs/ 下对应的文件即可。
+## 注意
+- 使用 NSS 请关闭 packet steering / flow offloading，不要用桥接 VLAN 过滤。
+- 默认 IP 只在全新配置时生效；保留配置升级不会改动原 IP。
