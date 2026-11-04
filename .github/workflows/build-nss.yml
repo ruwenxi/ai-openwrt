@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       source_branch:
-        description: "Gaojianli/immortalwrt-ipq 分支"
-        default: "master"
+        description: "laipeng668/immortalwrt 分支"
+        default: "openwrt-25.12"
         required: true
       lan_ip:
         description: "默认 LAN IP"
@@ -24,7 +24,7 @@ permissions:
   contents: write
 
 env:
-  SOURCE_REPO: https://github.com/Gaojianli/immortalwrt-ipq
+  SOURCE_REPO: https://github.com/laipeng668/immortalwrt.git
   TZ: Asia/Singapore
 
 jobs:
