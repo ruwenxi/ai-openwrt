@@ -101,7 +101,7 @@ jobs:
         run: |
           mkdir -p ../out
           find bin/targets -type f \( -name "*${{ matrix.device }}*" -o -name "sha256sums" \) -exec cp {} ../out/ \; || true
-          cp .config ../out/${{ matrix.id }}.config
+          cp .config ../out/${{ matrix.id }}.config || true
           ls -lh ../out
 
       - name: 上传产物
